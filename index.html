@@ -34,7 +34,10 @@
                     await createUserWithEmailAndPassword(auth, email, pass);
                 }
                 alert("Success! Welcome to Abhay Dev Env!");
-                window.location.href = "https://github.com/codespaces"; 
+                
+                // YE HAI NAYA ENGINE LINK 👿
+                window.location.href = "https://github.com/codespaces/new?repository=abhay711x-jpg/Abhay-IDE-Engine"; 
+                
             } catch (error) {
                 alert("Error: " + error.message);
                 btn.innerText = "Launch Workspace 🚀";
@@ -51,11 +54,13 @@
         <h1 class="text-3xl font-black mb-1 text-white">ABHAY PRO IDE</h1>
         <p class="text-blue-400 font-medium mb-8 text-xs uppercase tracking-widest">Cloud Workspace for Pro Developers</p>
         <div class="space-y-4 text-left">
-            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
-            <input id="pass" type="password" placeholder="Secure Password" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
-            <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-xl font-bold transition shadow-lg active:scale-95">Launch Workspace 🚀</button>
+            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
+            <input id="pass" type="password" placeholder="Secure Password" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
+            <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-xl font-bold transition shadow-lg active:scale-95 shadow-blue-600/20">Launch Workspace 🚀</button>
         </div>
-        <p class="mt-10 text-[10px] text-slate-500 uppercase font-bold tracking-widest">Abhay Gupta Edition</p>
+        <div class="mt-10 pt-6 border-t border-slate-800">
+             <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em]">Abhay Gupta Edition</p>
+        </div>
     </div>
 </body>
 </html>
