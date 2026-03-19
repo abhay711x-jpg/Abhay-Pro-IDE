@@ -43,9 +43,9 @@
                 }
                 msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Access Granted!</span>";
                 
-                // Redirect to ENGINE (Not the login page repo)
+                // MAGIC AUTO-LAUNCH LINK (Bypasses the selection page) 🚀👿
                 setTimeout(() => {
-                    window.location.href = "https://github.com/codespaces/new?repository=abhay711x-jpg/Abhay-IDE-Engine"; 
+                    window.location.href = "https://codespaces.new/abhay711x-jpg/Abhay-IDE-Engine"; 
                 }, 1500);
                 
             } catch (error) {
@@ -115,6 +115,23 @@
                 </div>
             </div>
         </div>
+
+        <div id="forgot-panel" class="vip-card p-8 rounded-3xl hidden">
+            <button onclick="toggleForgot()" class="text-gray-400 hover:text-white mb-6 transition text-sm"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-2 gold-text">Reset Password</h2>
+                <p class="text-gray-400 text-xs">Enter your email to receive a secure recovery link.</p>
+            </div>
+
+            <div class="space-y-5">
+                <input id="resetEmail" type="email" placeholder="Registered Email" class="vip-input w-full p-4 rounded-xl">
+                <p id="resetMsg" class="text-xs text-center font-medium h-4"></p>
+                <button onclick="resetPassword()" class="vip-btn w-full p-4 rounded-xl font-black">
+                    Send Link <i class="fas fa-envelope ml-2"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 
 </body>
