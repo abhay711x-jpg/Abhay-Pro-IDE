@@ -43,7 +43,6 @@
                 }
                 msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Access Granted!</span>";
                 
-                // MAGIC AUTO-LAUNCH LINK (Bypasses the selection page) 🚀👿
                 setTimeout(() => {
                     window.location.href = "https://codespaces.new/abhay711x-jpg/Abhay-IDE-Engine"; 
                 }, 1500);
@@ -73,6 +72,12 @@
         .vip-btn:hover { box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4); transform: scale(1.02); }
 
         .gold-text { background: linear-gradient(to right, #fde047, #eab308); -webkit-background-clip: text; color: transparent; }
+        
+        /* SOCIAL MEDIA BUTTONS HOVER EFFECTS */
+        .social-btn { transition: all 0.3s ease; }
+        .social-btn.insta:hover { color: #e1306c; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(225, 48, 108, 0.5)); }
+        .social-btn.fb:hover { color: #1877f2; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(24, 119, 242, 0.5)); }
+        .social-btn.yt:hover { color: #ff0000; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5)); }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen relative">
@@ -107,11 +112,22 @@
                 </button>
             </div>
 
-            <div class="mt-10 pt-6 border-t border-gray-800/50 flex flex-col items-center">
-                <p class="text-[10px] text-gray-500 font-bold tracking-[0.2em] uppercase">Built & Designed For Professionals</p>
-                <div class="mt-2 flex items-center gap-2 bg-yellow-500/10 px-4 py-2 rounded-full border border-yellow-500/20">
+            <div class="mt-8 pt-6 border-t border-gray-800/50 flex flex-col items-center">
+                <div class="flex items-center gap-2 bg-yellow-500/10 px-4 py-2 rounded-full border border-yellow-500/20 mb-4">
                     <i class="fas fa-shield-alt text-yellow-500 text-sm"></i>
                     <span class="gold-text font-black tracking-widest uppercase text-xs">Developed by Abhay Gupta</span>
+                </div>
+                
+                <div class="flex gap-6 mt-2">
+                    <a href="https://www.instagram.com/abhay.___06?igsh=MXF5MWV6eGR4eHo3MA==" target="_blank" class="social-btn insta text-gray-400 text-2xl">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=100029204985032&mibextid=ZbWKwL" target="_blank" class="social-btn fb text-gray-400 text-2xl">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://youtube.com/@abhay00f.k?si=Z7sy2K9jkRjnG3vI" target="_blank" class="social-btn yt text-gray-400 text-2xl">
+                        <i class="fab fa-youtube"></i>
+                    </a>
                 </div>
             </div>
         </div>
