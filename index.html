@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhay Pro Cloud IDE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8J1dg-LAefkkIJTRDqsF3_StdOBe1KSE",
+            authDomain: "abhay-cloud-ide.firebaseapp.com",
+            projectId: "abhay-cloud-ide",
+            storageBucket: "abhay-cloud-ide.firebasestorage.app",
+            messagingSenderId: "585916257013",
+            appId: "1:585916257013:web:4382659f728a9da878abbc",
+            measurementId: "G-JDQ02XGBD2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        window.handleAuth = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const btn = document.getElementById('authBtn');
+            try {
+                btn.innerText = "Connecting...";
+                try {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } catch {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                }
+                alert("Success! Welcome to Abhay Dev Env!");
+                window.location.href = "https://github.com/codespaces"; 
+            } catch (error) {
+                alert("Error: " + error.message);
+                btn.innerText = "Launch Workspace 🚀";
+            }
+        };
+    </script>
+    <style>
+        body { background: #020617; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-sm text-center border-b-4 border-blue-600">
+        <h1 class="text-3xl font-black mb-1 text-white">ABHAY PRO IDE</h1>
+        <p class="text-blue-400 font-medium mb-8 text-xs uppercase tracking-widest">Cloud Workspace for Pro Developers</p>
+        <div class="space-y-4 text-left">
+            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
+            <input id="pass" type="password" placeholder="Secure Password" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
+            <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-xl font-bold transition shadow-lg active:scale-95">Launch Workspace 🚀</button>
+        </div>
+        <p class="mt-10 text-[10px] text-slate-500 uppercase font-bold tracking-widest">Abhay Gupta Edition</p>
+    </div>
+</body>
+</html>
