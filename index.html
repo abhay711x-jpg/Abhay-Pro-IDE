@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abhay Pro Cloud IDE | Secure Login</title>
+    <title>Abhay Pro Cloud IDE | VIP Access</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="module">
@@ -22,7 +22,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
 
-        // Main Login/Signup Function
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
@@ -30,11 +29,11 @@
             const msg = document.getElementById('msg');
             
             if(!email || !pass) { 
-                msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Please enter details!</span>"; 
+                msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Empty fields!</span>"; 
                 return; 
             }
             
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Authenticating...";
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Verifying VIP Access...";
             
             try {
                 try {
@@ -42,105 +41,79 @@
                 } catch {
                     await createUserWithEmailAndPassword(auth, email, pass);
                 }
-                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-check-circle'></i> Success! Redirecting...</span>";
+                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Access Granted!</span>";
                 
-                // Redirect to IDE Engine
+                // Redirect to ENGINE (Not the login page repo)
                 setTimeout(() => {
                     window.location.href = "https://github.com/codespaces/new?repository=abhay711x-jpg/Abhay-IDE-Engine"; 
                 }, 1500);
                 
             } catch (error) {
                 msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> ${error.message}</span>`;
-                btn.innerHTML = "Access Workspace <i class='fas fa-arrow-right'></i>";
+                btn.innerHTML = "Launch VIP Workspace <i class='fas fa-rocket ml-2'></i>";
             }
         };
 
-        // Forgot Password Function
-        window.resetPassword = async () => {
-            const email = document.getElementById('resetEmail').value;
-            const resetMsg = document.getElementById('resetMsg');
-            
-            if (!email) {
-                resetMsg.innerHTML = "<span class='text-red-400'>Please enter your registered email.</span>";
-                return;
-            }
-            
-            try {
-                await sendPasswordResetEmail(auth, email);
-                resetMsg.innerHTML = "<span class='text-green-400'><i class='fas fa-envelope-open-text'></i> Password reset link sent to your email!</span>";
-            } catch (error) {
-                resetMsg.innerHTML = `<span class='text-red-400'>${error.message}</span>`;
-            }
-        };
-
-        // Toggle UI panels
         window.toggleForgot = () => {
             document.getElementById('login-panel').classList.toggle('hidden');
             document.getElementById('forgot-panel').classList.toggle('hidden');
         };
     </script>
     <style>
-        body { background: #07090f; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .bg-glow { position: absolute; width: 300px; height: 300px; background: #3b82f6; filter: blur(150px); border-radius: 50%; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.3; animation: pulse 4s infinite alternate; }
-        @keyframes pulse { 0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.2); } }
-        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
-        .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); outline: none; }
-        .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); transition: all 0.3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
+        body { background: #000000; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .ambient-light { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, rgba(0,0,0,0) 70%); top: -100px; right: -100px; border-radius: 50%; z-index: 0; }
+        .ambient-light-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); bottom: -200px; left: -100px; border-radius: 50%; z-index: 0; }
+        
+        .vip-card { background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05); position: relative; z-index: 10; }
+        
+        .vip-input { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; color: #fff; }
+        .vip-input:focus { border-color: #eab308; box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); outline: none; }
+        
+        .vip-btn { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .vip-btn:hover { box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4); transform: scale(1.02); }
+
+        .gold-text { background: linear-gradient(to right, #fde047, #eab308); -webkit-background-clip: text; color: transparent; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen relative">
     
-    <div class="bg-glow"></div>
+    <div class="ambient-light"></div>
+    <div class="ambient-light-2"></div>
 
     <div class="w-full max-w-md p-6 relative z-10">
         
-        <div id="login-panel" class="glass-panel p-8 rounded-2xl">
+        <div id="login-panel" class="vip-card p-8 rounded-3xl">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-black tracking-tight mb-2">ABHAY<span class="text-blue-500">_IDE</span></h1>
-                <p class="text-gray-400 text-sm font-medium tracking-widest uppercase">Developer Authentication</p>
+                <i class="fas fa-crown text-4xl mb-3 text-yellow-500" style="filter: drop-shadow(0 0 10px rgba(234,179,8,0.5));"></i>
+                <h1 class="text-3xl font-black tracking-tight mb-1">ABHAY <span class="gold-text">IDE</span></h1>
+                <p class="text-gray-400 text-xs font-bold tracking-[0.3em] uppercase">Premium Workspace</p>
             </div>
 
             <div class="space-y-5">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1 ml-1 uppercase tracking-wider">Email Address</label>
-                    <input id="email" type="email" placeholder="dev@example.com" class="input-field w-full p-3 rounded-lg text-white placeholder-gray-600">
+                    <input id="email" type="email" placeholder="VIP Email Address" class="vip-input w-full p-4 rounded-xl placeholder-gray-500">
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-1 ml-1">
-                        <label class="block text-xs text-gray-400 uppercase tracking-wider">Password</label>
-                        <button onclick="toggleForgot()" class="text-xs text-blue-400 hover:text-blue-300 transition">Forgot?</button>
+                    <div class="flex justify-end mb-1 mr-1">
+                        <button onclick="toggleForgot()" class="text-[10px] text-yellow-500 hover:text-yellow-300 uppercase tracking-wider font-bold transition">Forgot Password?</button>
                     </div>
-                    <input id="pass" type="password" placeholder="••••••••" class="input-field w-full p-3 rounded-lg text-white placeholder-gray-600">
+                    <input id="pass" type="password" placeholder="Secure Password" class="vip-input w-full p-4 rounded-xl placeholder-gray-500">
                 </div>
                 
                 <p id="msg" class="text-xs text-center font-medium h-4"></p>
                 
-                <button id="authBtn" onclick="handleAuth()" class="btn-primary w-full p-3.5 rounded-lg font-bold text-white tracking-wide mt-2">
-                    Access Workspace <i class="fas fa-arrow-right ml-1"></i>
+                <button id="authBtn" onclick="handleAuth()" class="vip-btn w-full p-4 rounded-xl font-black mt-2">
+                    Launch VIP Workspace <i class="fas fa-rocket ml-2"></i>
                 </button>
             </div>
-        </div>
 
-        <div id="forgot-panel" class="glass-panel p-8 rounded-2xl hidden">
-            <button onclick="toggleForgot()" class="text-gray-400 hover:text-white mb-6 transition"><i class="fas fa-arrow-left"></i> Back to Login</button>
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-2">Reset Password</h2>
-                <p class="text-gray-400 text-sm">Enter your email and we'll send you a secure link to create a new password.</p>
+            <div class="mt-10 pt-6 border-t border-gray-800/50 flex flex-col items-center">
+                <p class="text-[10px] text-gray-500 font-bold tracking-[0.2em] uppercase">Built & Designed For Professionals</p>
+                <div class="mt-2 flex items-center gap-2 bg-yellow-500/10 px-4 py-2 rounded-full border border-yellow-500/20">
+                    <i class="fas fa-shield-alt text-yellow-500 text-sm"></i>
+                    <span class="gold-text font-black tracking-widest uppercase text-xs">Developed by Abhay Gupta</span>
+                </div>
             </div>
-
-            <div class="space-y-5">
-                <input id="resetEmail" type="email" placeholder="Registered Email" class="input-field w-full p-3 rounded-lg text-white">
-                <p id="resetMsg" class="text-xs text-center font-medium h-4"></p>
-                <button onclick="resetPassword()" class="btn-primary w-full p-3.5 rounded-lg font-bold text-white">
-                    Send Reset Link <i class="fas fa-envelope ml-1"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="text-center mt-6">
-            <p class="text-[10px] text-gray-500 font-bold tracking-[0.2em] uppercase">Built for Production by Abhay</p>
         </div>
     </div>
 
