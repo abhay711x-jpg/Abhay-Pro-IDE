@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abhay Pro Cloud IDE</title>
+    <title>Abhay Pro Cloud IDE | Secure Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA8J1dg-LAefkkIJTRDqsF3_StdOBe1KSE",
@@ -15,52 +16,133 @@
             projectId: "abhay-cloud-ide",
             storageBucket: "abhay-cloud-ide.firebasestorage.app",
             messagingSenderId: "585916257013",
-            appId: "1:585916257013:web:4382659f728a9da878abbc",
-            measurementId: "G-JDQ02XGBD2"
+            appId: "1:585916257013:web:4382659f728a9da878abbc"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
 
+        // Main Login/Signup Function
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
             const btn = document.getElementById('authBtn');
+            const msg = document.getElementById('msg');
+            
+            if(!email || !pass) { 
+                msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Please enter details!</span>"; 
+                return; 
+            }
+            
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Authenticating...";
+            
             try {
-                btn.innerText = "Connecting...";
                 try {
                     await signInWithEmailAndPassword(auth, email, pass);
                 } catch {
                     await createUserWithEmailAndPassword(auth, email, pass);
                 }
-                alert("Success! Welcome to Abhay Dev Env!");
+                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-check-circle'></i> Success! Redirecting...</span>";
                 
-                // YE HAI NAYA ENGINE LINK 👿
-                window.location.href = "https://github.com/codespaces/new?repository=abhay711x-jpg/Abhay-IDE-Engine"; 
+                // Redirect to IDE Engine
+                setTimeout(() => {
+                    window.location.href = "https://github.com/codespaces/new?repository=abhay711x-jpg/Abhay-IDE-Engine"; 
+                }, 1500);
                 
             } catch (error) {
-                alert("Error: " + error.message);
-                btn.innerText = "Launch Workspace 🚀";
+                msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> ${error.message}</span>`;
+                btn.innerHTML = "Access Workspace <i class='fas fa-arrow-right'></i>";
             }
+        };
+
+        // Forgot Password Function
+        window.resetPassword = async () => {
+            const email = document.getElementById('resetEmail').value;
+            const resetMsg = document.getElementById('resetMsg');
+            
+            if (!email) {
+                resetMsg.innerHTML = "<span class='text-red-400'>Please enter your registered email.</span>";
+                return;
+            }
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                resetMsg.innerHTML = "<span class='text-green-400'><i class='fas fa-envelope-open-text'></i> Password reset link sent to your email!</span>";
+            } catch (error) {
+                resetMsg.innerHTML = `<span class='text-red-400'>${error.message}</span>`;
+            }
+        };
+
+        // Toggle UI panels
+        window.toggleForgot = () => {
+            document.getElementById('login-panel').classList.toggle('hidden');
+            document.getElementById('forgot-panel').classList.toggle('hidden');
         };
     </script>
     <style>
-        body { background: #020617; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        body { background: #07090f; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .bg-glow { position: absolute; width: 300px; height: 300px; background: #3b82f6; filter: blur(150px); border-radius: 50%; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.3; animation: pulse 4s infinite alternate; }
+        @keyframes pulse { 0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.2); } }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); outline: none; }
+        .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-sm text-center border-b-4 border-blue-600">
-        <h1 class="text-3xl font-black mb-1 text-white">ABHAY PRO IDE</h1>
-        <p class="text-blue-400 font-medium mb-8 text-xs uppercase tracking-widest">Cloud Workspace for Pro Developers</p>
-        <div class="space-y-4 text-left">
-            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
-            <input id="pass" type="password" placeholder="Secure Password" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
-            <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-xl font-bold transition shadow-lg active:scale-95 shadow-blue-600/20">Launch Workspace 🚀</button>
+<body class="flex items-center justify-center min-h-screen relative">
+    
+    <div class="bg-glow"></div>
+
+    <div class="w-full max-w-md p-6 relative z-10">
+        
+        <div id="login-panel" class="glass-panel p-8 rounded-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black tracking-tight mb-2">ABHAY<span class="text-blue-500">_IDE</span></h1>
+                <p class="text-gray-400 text-sm font-medium tracking-widest uppercase">Developer Authentication</p>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1 ml-1 uppercase tracking-wider">Email Address</label>
+                    <input id="email" type="email" placeholder="dev@example.com" class="input-field w-full p-3 rounded-lg text-white placeholder-gray-600">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1 ml-1">
+                        <label class="block text-xs text-gray-400 uppercase tracking-wider">Password</label>
+                        <button onclick="toggleForgot()" class="text-xs text-blue-400 hover:text-blue-300 transition">Forgot?</button>
+                    </div>
+                    <input id="pass" type="password" placeholder="••••••••" class="input-field w-full p-3 rounded-lg text-white placeholder-gray-600">
+                </div>
+                
+                <p id="msg" class="text-xs text-center font-medium h-4"></p>
+                
+                <button id="authBtn" onclick="handleAuth()" class="btn-primary w-full p-3.5 rounded-lg font-bold text-white tracking-wide mt-2">
+                    Access Workspace <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
         </div>
-        <div class="mt-10 pt-6 border-t border-slate-800">
-             <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em]">Abhay Gupta Edition</p>
+
+        <div id="forgot-panel" class="glass-panel p-8 rounded-2xl hidden">
+            <button onclick="toggleForgot()" class="text-gray-400 hover:text-white mb-6 transition"><i class="fas fa-arrow-left"></i> Back to Login</button>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-2">Reset Password</h2>
+                <p class="text-gray-400 text-sm">Enter your email and we'll send you a secure link to create a new password.</p>
+            </div>
+
+            <div class="space-y-5">
+                <input id="resetEmail" type="email" placeholder="Registered Email" class="input-field w-full p-3 rounded-lg text-white">
+                <p id="resetMsg" class="text-xs text-center font-medium h-4"></p>
+                <button onclick="resetPassword()" class="btn-primary w-full p-3.5 rounded-lg font-bold text-white">
+                    Send Reset Link <i class="fas fa-envelope ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center mt-6">
+            <p class="text-[10px] text-gray-500 font-bold tracking-[0.2em] uppercase">Built for Production by Abhay</p>
         </div>
     </div>
+
 </body>
 </html>
