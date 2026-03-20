@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // TERA FIREBASE CONFIG (Dhyan rakhna ye public na ho jaye)
         const firebaseConfig = {
             apiKey: "AIzaSyA8J1dg-LAefkkIJTRDqsF3_StdOBe1KSE",
             authDomain: "abhay-cloud-ide.firebaseapp.com",
@@ -21,38 +22,69 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
+        const googleProvider = new GoogleAuthProvider();
 
-        window.handleAuth = async () => {
+        // TERA REPLIT ENGINE LINK
+        const ENGINE_URL = "https://6779eabb-3c74-4b24-a2df-7251ddcb2de4-00-1w6rsob9ehypz.sisko.replit.dev/?folder=/home";
+
+        // 1. LOGIN FUNCTION
+        window.loginUser = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
-            const btn = document.getElementById('authBtn');
             const msg = document.getElementById('msg');
             
-            if(!email || !pass) { 
-                msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Empty fields!</span>"; 
-                return; 
-            }
+            if(!email || !pass) { msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Empty fields!</span>"; return; }
             
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Verifying VIP Access...";
+            msg.innerHTML = "<span class='text-yellow-400'><i class='fas fa-spinner fa-spin'></i> Authenticating...</span>";
             
             try {
-                try {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } catch {
-                    await createUserWithEmailAndPassword(auth, email, pass);
+                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                if (!userCredential.user.emailVerified) {
+                    msg.innerHTML = "<span class='text-red-400'><i class='fas fa-shield-alt'></i> Please verify your email first!</span>";
+                    auth.signOut();
+                    return;
                 }
-                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Access Granted!</span>";
-                
-                setTimeout(() => {
-                    window.location.href = "https://codespaces.new/abhay711x-jpg/Abhay-IDE-Engine"; 
-                }, 1500);
-                
+                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Access Granted! Booting Engine...</span>";
+                setTimeout(() => { window.location.href = ENGINE_URL; }, 1500);
             } catch (error) {
-                msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> ${error.message}</span>`;
-                btn.innerHTML = "Launch VIP Workspace <i class='fas fa-rocket ml-2'></i>";
+                msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> Incorrect Email or Password</span>`;
             }
         };
 
+        // 2. SIGNUP (CREATE ACCOUNT) FUNCTION
+        window.signupUser = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const msg = document.getElementById('msg');
+            
+            if(!email || !pass) { msg.innerHTML = "<span class='text-red-400'><i class='fas fa-exclamation-triangle'></i> Empty fields!</span>"; return; }
+            
+            msg.innerHTML = "<span class='text-yellow-400'><i class='fas fa-spinner fa-spin'></i> Creating Account...</span>";
+            
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                await sendEmailVerification(userCredential.user);
+                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-envelope-open-text'></i> Verification link sent! Check your Gmail.</span>";
+                auth.signOut();
+            } catch (error) {
+                msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> ${error.message}</span>`;
+            }
+        };
+
+        // 3. GOOGLE LOGIN FUNCTION
+        window.googleAuth = async () => {
+            const msg = document.getElementById('msg');
+            msg.innerHTML = "<span class='text-yellow-400'><i class='fas fa-spinner fa-spin'></i> Connecting to Google...</span>";
+            try {
+                await signInWithPopup(auth, googleProvider);
+                msg.innerHTML = "<span class='text-green-400'><i class='fas fa-shield-check'></i> Google Auth Success!</span>";
+                setTimeout(() => { window.location.href = ENGINE_URL; }, 1500);
+            } catch (error) {
+                msg.innerHTML = `<span class='text-red-400'><i class='fas fa-times-circle'></i> Google Login Failed</span>`;
+            }
+        };
+
+        // FORGOT PASSWORD
         window.resetPassword = async () => {
             const email = document.getElementById('resetEmail').value;
             const resetMsg = document.getElementById('resetMsg');
@@ -63,25 +95,22 @@
             } catch (error) { resetMsg.innerHTML = `<span class='text-red-400'>${error.message}</span>`; }
         };
 
+        // UI TOGGLES
         window.toggleForgot = () => {
             document.getElementById('login-panel').classList.toggle('hidden');
             document.getElementById('forgot-panel').classList.toggle('hidden');
         };
 
-        // NEW MAGIC EYE BUTTON FUNCTION 👁️👿
         window.togglePassword = () => {
             const passInput = document.getElementById('pass');
             const eyeIcon = document.getElementById('eyeIcon');
-            
             if (passInput.type === 'password') {
                 passInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-                eyeIcon.classList.add('text-yellow-500'); // Glow effect when visible
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+                eyeIcon.classList.add('text-yellow-500');
             } else {
                 passInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
                 eyeIcon.classList.remove('text-yellow-500');
             }
         };
@@ -90,17 +119,16 @@
         body { background: #000000; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
         .ambient-light { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, rgba(0,0,0,0) 70%); top: -100px; right: -100px; border-radius: 50%; z-index: 0; }
         .ambient-light-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); bottom: -200px; left: -100px; border-radius: 50%; z-index: 0; }
-        
         .vip-card { background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05); position: relative; z-index: 10; }
-        
         .vip-input { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; color: #fff; }
         .vip-input:focus { border-color: #eab308; box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); outline: none; }
-        
         .vip-btn { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         .vip-btn:hover { box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4); transform: scale(1.02); }
-
+        .signup-btn { background: transparent; border: 1px solid #eab308; color: #eab308; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .signup-btn:hover { background: rgba(234, 179, 8, 0.1); }
+        .google-btn { background: white; color: black; transition: 0.3s; font-weight: bold; }
+        .google-btn:hover { background: #f1f5f9; transform: scale(1.02); }
         .gold-text { background: linear-gradient(to right, #fde047, #eab308); -webkit-background-clip: text; color: transparent; }
-        
         .social-btn { transition: all 0.3s ease; }
         .social-btn.insta:hover { color: #e1306c; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(225, 48, 108, 0.5)); }
         .social-btn.fb:hover { color: #1877f2; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(24, 119, 242, 0.5)); }
@@ -115,15 +143,15 @@
     <div class="w-full max-w-md p-6 relative z-10">
         
         <div id="login-panel" class="vip-card p-8 rounded-3xl">
-            <div class="text-center mb-8">
+            <div class="text-center mb-6">
                 <i class="fas fa-crown text-4xl mb-3 text-yellow-500" style="filter: drop-shadow(0 0 10px rgba(234,179,8,0.5));"></i>
                 <h1 class="text-3xl font-black tracking-tight mb-1">ABHAY <span class="gold-text">IDE</span></h1>
                 <p class="text-gray-400 text-xs font-bold tracking-[0.3em] uppercase">Premium Workspace</p>
             </div>
 
-            <div class="space-y-5">
+            <div class="space-y-4">
                 <div>
-                    <input id="email" type="email" placeholder="VIP Email Address" class="vip-input w-full p-4 rounded-xl placeholder-gray-500">
+                    <input id="email" type="email" placeholder="Enter Gmail" class="vip-input w-full p-4 rounded-xl placeholder-gray-500">
                 </div>
                 
                 <div>
@@ -131,7 +159,7 @@
                         <button onclick="toggleForgot()" class="text-[10px] text-yellow-500 hover:text-yellow-300 uppercase tracking-wider font-bold transition">Forgot Password?</button>
                     </div>
                     <div class="relative">
-                        <input id="pass" type="password" placeholder="Secure Password" class="vip-input w-full p-4 rounded-xl placeholder-gray-500 pr-12">
+                        <input id="pass" type="password" placeholder="Enter Password" class="vip-input w-full p-4 rounded-xl placeholder-gray-500 pr-12">
                         <button onclick="togglePassword()" type="button" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-500 transition focus:outline-none">
                             <i id="eyeIcon" class="fas fa-eye text-lg"></i>
                         </button>
@@ -140,12 +168,28 @@
                 
                 <p id="msg" class="text-xs text-center font-medium h-4"></p>
                 
-                <button id="authBtn" onclick="handleAuth()" class="vip-btn w-full p-4 rounded-xl font-black mt-2">
-                    Launch VIP Workspace <i class="fas fa-rocket ml-2"></i>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="loginUser()" class="vip-btn w-1/2 p-3 rounded-xl font-black text-sm">
+                        Login <i class="fas fa-sign-in-alt ml-1"></i>
+                    </button>
+                    <button onclick="signupUser()" class="signup-btn w-1/2 p-3 rounded-xl font-black text-sm">
+                        Sign Up <i class="fas fa-user-plus ml-1"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-700"></div>
+                    <span class="flex-shrink-0 mx-4 text-gray-500 text-xs">OR</span>
+                    <div class="flex-grow border-t border-gray-700"></div>
+                </div>
+
+                <button onclick="googleAuth()" class="google-btn w-full p-3 rounded-xl flex items-center justify-center gap-2">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                    Continue with Google
                 </button>
             </div>
 
-            <div class="mt-8 pt-6 border-t border-gray-800/50 flex flex-col items-center">
+            <div class="mt-6 pt-6 border-t border-gray-800/50 flex flex-col items-center">
                 <div class="flex items-center gap-2 bg-yellow-500/10 px-4 py-2 rounded-full border border-yellow-500/20 mb-4">
                     <i class="fas fa-shield-alt text-yellow-500 text-sm"></i>
                     <span class="gold-text font-black tracking-widest uppercase text-xs">Developed by Abhay Gupta</span>
@@ -173,7 +217,7 @@
             </div>
 
             <div class="space-y-5">
-                <input id="resetEmail" type="email" placeholder="Registered Email" class="vip-input w-full p-4 rounded-xl">
+                <input id="resetEmail" type="email" placeholder="Registered Gmail" class="vip-input w-full p-4 rounded-xl">
                 <p id="resetMsg" class="text-xs text-center font-medium h-4"></p>
                 <button onclick="resetPassword()" class="vip-btn w-full p-4 rounded-xl font-black">
                     Send Link <i class="fas fa-envelope ml-2"></i>
